@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  CssBaseline,
+  List,
+  ThemeProvider,
+  ListItem,
+  createTheme,
+} from "@mui/material";
+import { FC, useState, useEffect } from "react";
+import { getWishes, Wish } from "./services/wishes";
+import { WishForm } from "./components/WishForm";
+import "./scss/index.scss";
 
-function App() {
+const theme = createTheme({
+  typography: {
+    fontFamily: `'Noto Sans', sans-serif`,
+    fontWeightRegular: 600,
+  },
+  palette: {
+    mode: "dark",
+    background: {
+      default: "#131924",
+    },
+    primary: {
+      main: "#4d88ff",
+    },
+    secondary: {
+      main: "#a9a9a9",
+    },
+  },
+});
+
+export const App: FC = () => {
+  const [wishes, setWishes] = useState<Wish[]>([]);
+
+  useEffect(() => {
+    getWishes().then(setWishes);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <WishForm />
+      <List>
+        {wishes.map((wish) => {
+          return <ListItem key={wish.name}>{wish.name}</ListItem>;
+        })}
+      </List>
+    </ThemeProvider>
   );
-}
-
-export default App;
+};
